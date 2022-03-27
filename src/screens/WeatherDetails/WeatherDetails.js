@@ -1,60 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ImageBackground, Dimensions, Image, StyleSheet } from 'react-native';
-import axios from "axios";
+import { View, Text, ImageBackground, Image } from 'react-native';
 import styles from './WeatherDetails.style.js';
-
-const options = {
-  method: 'GET',
-  url: 'https://community-open-weather-map.p.rapidapi.com/weather',
-  params: {
-    q: 'London,uk',
-    lat: '0',
-    lon: '0',
-    id: '2172797',
-    lang: 'null',
-    units: 'imperial',
-  },
-  headers: {
-    'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
-    'X-RapidAPI-Key': '2c26297f5cmshdaf04b35158335bp1cb966jsne82ef5cde189'
-  }
-};
+import GlobalStyle from '../../utils/GlobalStyle';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrentForecast } from '../../redux/actions';
 
 export function WeatherDetailsScreen({ route, navigation }) {
-    const [city, setCityName] = useState("");
-    const [temp, setTemp] = useState("");
-    const [feelslike, setFeelslike] = useState("");
-    const [pressure, setPressure] = useState("");
-    const [windSpeed, setWindSpeed] = useState("");
+    const { weatherData } = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-      axios.request(options).then(function (response) {
-        if(response && response.data) {
-          setCityName(response.data.name);
-          setTemp(response.data.main.temp);
-          setFeelslike(response.data.main.feelslike);
-          setPressure(response.data.main.pressure);
-          setWindSpeed(response.data.wind.speed);
-        }
-      }).catch(function (error) {
-        console.error(error);
-      });
+      dispatch(getCurrentForecast());
     }, []);
-    
+
     return (
       <View style={styles.alignCenter}>
         <ImageBackground source={require('./../../assets/images/weather-background.png')} style={styles.imageBackground}>
-          <Text style={styles.city}>{city}</Text>
-          <View style={styles.row}>
-            <Image source={require("./../../assets/images/thermometer.png")} style={styles.image} />
-            <Text style={styles.text}>Temp: {temp}</Text>
-          </View>
-          <View style={styles.row}>
-            <Image source={require("./../../assets/images/pressure.png")} style={styles.image} />
-            <Text style={styles.text}>Pressure: { pressure }</Text>
-          </View>
-          <Text style={styles.text}>Wind: { windSpeed }</Text>
-          <Text style={styles.text}>Feels like: { feelslike }</Text>
+          <Text style={styles.city}>{weatherData.name}</Text>
+          {
+            weatherData.main && 
+            <View>
+              <View style={GlobalStyle.row}>
+                <Image source={require("./../../assets/images/thermometer.png")} style={styles.image} />
+                <Text style={styles.text}>Temp: {weatherData.main.temp}</Text>
+              </View>
+              <Text style={styles.text}>Feels like: { weatherData.main.feels_like }</Text>
+            </View>
+          }
+          {
+            weatherData.wind &&
+            <View>
+              <Text style={styles.text}>Wind: { weatherData.wind.speed }</Text>
+            </View>
+          }
         </ImageBackground>
       </View>
     );

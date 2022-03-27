@@ -16,7 +16,8 @@ export default StyleSheet.create({
     marginVertical: 8
   },
   title: {
-    fontSize: 24
+    fontSize: 24,
+    color: '#282828'
   },
   screenTitle: {
     fontFamily: "QuartzoBold",
@@ -60,5 +61,11 @@ export default StyleSheet.create({
   },
   emptyMonthTextStyle: {
     fontWeight: '700'
+  },
+  bottomSheetContainer: {
+    justifyContent: "space-between",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 20
   }
 });
