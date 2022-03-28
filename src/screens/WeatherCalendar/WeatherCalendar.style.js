@@ -8,8 +8,9 @@ export default StyleSheet.create({
     fontFamily: "RobotoCondensedBold",
     borderRadius: 5
   },
-  margin: {
-    margin: 20
+  calendarContainer: {
+    margin: 20,
+    justifyContent: "center"
   },
   item: {
     padding: 20,
@@ -29,9 +30,6 @@ export default StyleSheet.create({
     justifyContent: 'center', 
     width: width
   },
-  button: {
-    width: 100
-  }, 
   dayTextStyle: {
     color: '#282828',
     fontWeight: '700',
@@ -67,5 +65,13 @@ export default StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 20
+  },
+  button: {
+    backgroundColor: "#6495ED",
+    borderRadius: 8,
+    alignSelf: "center"
+  },
+  buttonText: {
+    color: "#FFF"
   }
 });

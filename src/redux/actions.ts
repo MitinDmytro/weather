@@ -7,7 +7,7 @@ const options = {
 	method: 'GET',
 	headers: {
 		'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
-		'X-RapidAPI-Key': '1444f794f4mshed92bebd8d87561p106182jsn34b8c5820478'
+		'X-RapidAPI-Key': '42aadb5e30msh3fcef82e3ec801cp1e1dffjsn4f7f47e1b97b'
 	}
 };
 
@@ -23,7 +23,7 @@ export const getCurrentForecast = () => {
                     payload: json
                 });
             } else {
-                console.log('Unable to fetch!');
+                console.log('Unable to fetch. You have exceeded the rate limit per minute for your plan, BASIC, by the API provider');
             }
         }
     } catch (error) {
@@ -43,7 +43,7 @@ export const getFiveDaysForecast = () => {
                     payload: json.list
                 });
             } else {
-                console.log('Unable to fetch!');
+                console.log('Unable to fetch. You have exceeded the rate limit per minute for your plan, BASIC, by the API provider');
             }
         }
     } catch (error) {

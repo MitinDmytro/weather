@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions, SectionList, ImageBackground, Button } from 'react-native';
+import { View, Text, Dimensions, SectionList, ImageBackground } from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Moment from 'moment';
 import { Calendar } from 'react-native-calendario';
 import styles from './WeatherCalendar.style.js';
 import { getFiveDaysForecast } from '../../redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
+import Button from '../../components/Button';
 
 const { height } = Dimensions.get('window');
 
@@ -20,9 +21,18 @@ const Item = ({ title }) => (
   </View>
 );
 
+function showBottomSheetMenu() {
+  try {
+    this.RBSheet.open();
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export function WeatherCalendarScreen({ route, navigation }) {
     const [weatherList, setForecast] = useState<WeatherData[]>([]);
-    const { weatherData } = useSelector(state => state.userReducer);
+    const { weatherData } = useSelector((state) => state.userReducer);
     const dispatch = useDispatch();
 
     var currentDate = new Date();
@@ -30,52 +40,59 @@ export function WeatherCalendarScreen({ route, navigation }) {
     var endDate = currentDate.setDate(currentDate.getDate() + numberOfDaysToAdd);
 
     useEffect(() => {
-      dispatch(getFiveDaysForecast());
-
+      var filteredWeatherData: WeatherData[] = [];
       if(weatherData) {
-        var filteredWeatherData: WeatherData[] = [];
         for (let i = 0; i < weatherData.length; i++) {
-          filteredWeatherData.push({ 
+          filteredWeatherData.push({
             title: Moment(weatherData[i].dt_txt).format("DD/MM/YY HH:mm"),
             data: [
               "Temp: " + weatherData[i].main.temp,
               "Feels like: " + weatherData[i].main.feels_like,
               "Visibility: " + weatherData[i].visibility,
               "Wind Speed: " + weatherData[i].wind.speed
-            ]});
+            ]
+          });
         }
         setForecast(filteredWeatherData);
       }
-    }, []);
+    }, [weatherData]);
 
     return (
       <ImageBackground source={require('./../../assets/images/weather-background-day.png')} style={styles.imageBackground}>
         <View>
-        <View style={styles.margin}>
-          <Text center style={styles.screenTitle}>Weather Calendar</Text>
-          <Calendar
-            locale="en"
-            initialListSize={1}
-            onPress={() => navigation.navigate('WeatherDetailsScreen')}
-            minDate={new Date()}
-            startDate={new Date()}
-            endDate={new Date(endDate)}
-            disableRange={true}
-            numberOfMonths={1}
-            disableOffsetDays={true}
-            theme={{
-              monthTitleTextStyle: styles.monthTitleTextStyle,
-              emptyMonthTextStyle: styles.emptyMonthTextStyle,
-              weekColumnStyle: styles.weekColumnStyle,
-              weekColumnTextStyle: styles.weekColumnTextStyle,
-              dayTextStyle: styles.dayTextStyle,
-              todayTextStyle: styles.todayTextStyle,
-              activeDayContainerStyle: styles.activeDayContainerStyle,
-              activeDayTextStyle: styles.activeDayTextStyle
-            }}
-          />
-        </View>
-        <Button style={styles.button} title="Show bottom sheet menu" onPress={() => this.RBSheet.open()}></Button>
+          <View style={styles.calendarContainer}>
+            <Text center style={styles.screenTitle}>Weather Calendar</Text>
+            <Calendar
+              locale="en"
+              initialListSize={1}
+              onPress={() => navigation.navigate('WeatherDetailsScreen')}
+              minDate={new Date()}
+              startDate={new Date()}
+              endDate={new Date(endDate)}
+              disableRange={true}
+              numberOfMonths={1}
+              disableOffsetDays={true}
+              theme={{
+                monthTitleTextStyle: styles.monthTitleTextStyle,
+                emptyMonthTextStyle: styles.emptyMonthTextStyle,
+                weekColumnStyle: styles.weekColumnStyle,
+                weekColumnTextStyle: styles.weekColumnTextStyle,
+                dayTextStyle: styles.dayTextStyle,
+                todayTextStyle: styles.todayTextStyle,
+                activeDayContainerStyle: styles.activeDayContainerStyle,
+                activeDayTextStyle: styles.activeDayTextStyle
+              }}
+            />
+
+            <Button text="Show bottom sheet menu"
+              buttonCustomStyles={styles.button}
+              textCustomStyles={styles.buttonText} 
+              onClick={() => {
+                dispatch(getFiveDaysForecast())
+                showBottomSheetMenu()
+              }} />
+          </View>
+
         <View row>
           <RBSheet
             ref={(ref) => {
